@@ -31,7 +31,6 @@ This project is an advanced image detection system designed to recognize and pro
   - `ultralytics`
   - `paddleocr`
   - `sqlite3`
-- Tesseract OCR installed on your system.
 - A webcam or video input device for live feed processing.
 
 ## Setup
