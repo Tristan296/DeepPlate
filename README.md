@@ -10,7 +10,6 @@ This project is an advanced image detection system designed to recognize and pro
 - **Live Video Feed Processing**: Captures frames from a live video feed and detects license plates in real-time.
 - **License Plate Validation**: Validates detected text against Australian license plate formats using regex patterns.
 - **Database Integration**: Stores detected license plates and their states in an SQLite database.
-- **Customizable Training**: Includes a script to train YOLO models on custom datasets.
 - **Image-Based Detection**: Processes static images to detect and validate license plates.
 
 ## Project Structure
