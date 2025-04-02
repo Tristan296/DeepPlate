@@ -1,7 +1,7 @@
 # Image Detection
 
 > A project that utilizes machine learning to detect and classify objects in images.
-> Live demo [_here_](https://www.example.com). `<!-- Replace with actual link if available -->`
+> Live demo [_here_](https://www.example.com). 
 
 ## Table of Contents
 
@@ -80,8 +80,30 @@ To do:
 
 ## Acknowledgements
 
-- This project was inspired by the advancements in computer vision and machine learning.
-- Many thanks to the TensorFlow and OpenCV communities for their excellent libraries and documentation.
+### YOLO by Ultralytics
+
+```bibtex
+@misc{yolo2023,
+  author       = {Jocher, Glenn and Chaurasia, Ayush and Qiu, Jing},
+  title        = {YOLO by Ultralytics},
+  year         = {2023},
+  publisher    = {GitHub},
+  journal      = {GitHub repository},
+  howpublished = {\url{https://github.com/ultralytics/yolov5}}
+}
+```
+
+### PaddleOCR
+
+```bibtex
+@article{paddleocr2021,
+  author       = {PaddleOCR Contributors},
+  title        = {PaddleOCR: An Open-Source Optical Character Recognition Tool Based on PaddlePaddle},
+  year         = {2021},
+  journal      = {GitHub repository},
+  howpublished = {\url{https://github.com/PaddlePaddle/PaddleOCR}}
+}
+```
 
 ## Contact
 
