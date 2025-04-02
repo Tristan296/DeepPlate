@@ -1,4 +1,7 @@
-# Image Detection and License Plate Recognition
+# DeepPlate 
+![close-up-of-camera-lens-548569043-586fc07d3df78c17b6d34728-small](https://github.com/user-attachments/assets/bcded706-ff55-43b8-b94a-8ca391a48661)
+
+## Image Detection and License Plate Recognition
 
 This project is an advanced image detection system designed to recognize and process license plates from live video feeds and images. It uses YOLO for object detection, PaddleOCR for text recognition, and SQLite for storing detected license plates.
 
