@@ -1,75 +1,88 @@
-# DeepPlate 
-![close-up-of-camera-lens-548569043-586fc07d3df78c17b6d34728-small](https://github.com/user-attachments/assets/bcded706-ff55-43b8-b94a-8ca391a48661)
+# Image Detection
 
-## Image Detection and License Plate Recognition
+> A project that utilizes machine learning to detect and classify objects in images.
+> Live demo [_here_](https://www.example.com). `<!-- Replace with actual link if available -->`
 
-This project is an advanced image detection system designed to recognize and process license plates from live video feeds and images. It uses YOLO for object detection, PaddleOCR for text recognition, and SQLite for storing detected license plates.
+## Table of Contents
+
+* [General Info](#general-information)
+* [Technologies Used](#technologies-used)
+* [Features](#features)
+* [Screenshots](#screenshots)
+* [Setup](#setup)
+* [Usage](#usage)
+* [Project Status](#project-status)
+* [Room for Improvement](#room-for-improvement)
+* [Acknowledgements](#acknowledgements)
+* [Contact](#contact)
+
+## General Information
+
+- This project aims to simplify the process of detecting and classifying objects in images using advanced machine learning techniques.
+- It solves the problem of manual image classification by automating the process.
+- The purpose of this project is to provide an easy-to-use tool for developers and researchers working with image data.
+
+## Technologies Used
+
+- Python - version 3.9
+- TensorFlow - version 2.10
+- OpenCV - version 4.5
 
 ## Features
 
-- **Live Video Feed Processing**: Captures frames from a live video feed and detects license plates in real-time.
-- **License Plate Validation**: Validates detected text against Australian license plate formats using regex patterns.
-- **Database Integration**: Stores detected license plates and their states in an SQLite database.
-- **Image-Based Detection**: Processes static images to detect and validate license plates.
+List the ready features here:
 
-## Project Structure
+- Object detection in real-time
+- Classification of detected objects
+- Support for multiple image formats
 
-- `liveFeedRecognition.py`: Main script for live video feed processing and license plate recognition.
-- `trainModel.py`: Script for training YOLO models on custom datasets.
-- `main.py`: Script for processing static images and detecting license plates.
-- `chat_template.jinja`: Template for OCR-related tasks.
-- `yolo11n.pt`: Pre-trained YOLO model weights.
-- `last.pt`: Custom model located in `train14/weights/` trained for license plates
-- `regos.db`: SQLite database for storing detected license plates.
+## Screenshots
 
-## Requirements
+![Example screenshot](./img/screenshot.png)
 
-- Python 3.8+
-- Required Python libraries:
-  - `opencv-python`
-  - `numpy`
-  - `ultralytics`
-  - `paddleocr`
-  - `sqlite3`
-- A webcam or video input device for live feed processing.
+<!-- Add actual screenshots of the project -->
 
 ## Setup
 
-1. Clone the repository:
+- Install the required dependencies listed in `requirements.txt`.
+- Clone the repository and navigate to the project directory.
+- Run the following command to install dependencies:
+  ```
+  pip install -r requirements.txt
+  ```
 
-   ```bash
-   git clone <repository-url>
-   cd ImageDetection
-   ```
-2. Install dependencies:
+## Usage
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+- To detect objects in an image, run the following command:
+  ```
+  python detect.py --image path/to/image.jpg
+  ```
+- For real-time detection using a webcam:
+  ```
+  python detect.py --webcam
+  ```
 
-## Attribution
+## Project Status
 
-### YOLO by Ultralytics
+Project is: _in progress_. Further improvements and optimizations are being worked on.
 
-```bibtex
-@misc{yolo2023,
-  author       = {Jocher, Glenn and Chaurasia, Ayush and Qiu, Jing},
-  title        = {YOLO by Ultralytics},
-  year         = {2023},
-  publisher    = {GitHub},
-  journal      = {GitHub repository},
-  howpublished = {\url{https://github.com/ultralytics/yolov5}}
-}
-```
+## Room for Improvement
 
-### PaddleOCR
+Room for improvement:
 
-```bibtex
-@article{paddleocr2021,
-  author       = {PaddleOCR Contributors},
-  title        = {PaddleOCR: An Open-Source Optical Character Recognition Tool Based on PaddlePaddle},
-  year         = {2021},
-  journal      = {GitHub repository},
-  howpublished = {\url{https://github.com/PaddlePaddle/PaddleOCR}}
-}
-```
+- Enhance the accuracy of object detection.
+- Add support for additional machine learning models.
+
+To do:
+
+- Implement a user-friendly GUI.
+- Add functionality for batch image processing.
+
+## Acknowledgements
+
+- This project was inspired by the advancements in computer vision and machine learning.
+- Many thanks to the TensorFlow and OpenCV communities for their excellent libraries and documentation.
+
+## Contact
+
+Created by [@tristan](https://github.com/tristan296) - feel free to contact me!
