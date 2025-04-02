@@ -115,8 +115,9 @@ replace_pattern = r"[-\s\.·]+"
 path = os.getcwd() + "/train14/weights/last.pt"
 model = YOLO(path)  # Update to the correct path
 model.fuse()
-ocr = PaddleOCR()
-
+ocr = PaddleOCR(
+    use_angle_cls=True,
+    lang="en")
 
 def initialize_video_capture():
     if os.name == "nt":  # Check if the OS is Windows
@@ -166,6 +167,40 @@ def feed_worker(feed_queue):
 
     cap.release()
 
+def preprocess_frame(roi):
+    """
+    Preprocesses the frame for license plate detection.
+    Args:
+        frame (numpy.ndarray): The video frame to preprocess.
+    Returns:
+        numpy.ndarray: The preprocessed frame.
+    """
+    #Modify the preprocess_roi function to handle small ROIs
+    upsampled = cv2.resize(roi, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+    gray = cv2.cvtColor(upsampled, cv2.COLOR_BGR2GRAY)
+    gray = cv2.equalizeHist(gray)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+    _, binary = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    deskewed = deskew_image(binary)
+    return deskewed
+
+def deskew_image(img):
+    coords = np.column_stack(np.nonzero(img > 0))
+    rect = cv2.minAreaRect(coords)
+    angle = rect[-1]
+
+    # Correct the rotation to ensure horizontal alignment
+    if angle < -45:
+        angle += 90  # Fix for incorrectly rotated images
+    elif angle > 45:
+        angle -= 90  # Another fix for vertical flipping
+
+    (h, w) = img.shape[:2]
+    center = (w // 2, h // 2)
+    rotation_matrix = cv2.getRotationMatrix2D(center, angle, 1.0)
+    rotated = cv2.warpAffine(img, rotation_matrix, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+
+    return rotated
 
 def validate_combined_text(combined_text):
     """
@@ -305,21 +340,26 @@ def validate_and_annotate(frame, results):
         numpy.ndarray: The annotated frame.
     """
     detected_texts = []
+    rois = []
 
     for result in results:
         for box in result.boxes:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
+            # predict the roi based on the bounding box
             roi = frame[y1:y2, x1:x2]
+            rois.append(roi)
+            cv2.waitKey(1)
             state, detected_text = extract_text_from_roi(roi)
 
             if detected_text and state:
                 detected_texts.append((detected_text, state, (x1, y1, x2, y2)))
                 insert_rego(detected_text, state)
+    
 
     return annotate_frame(frame, detected_texts)
 
 
-def annotate_frame(frame, detected_texts):
+def annotate_frame(frame, detected_texts): 
     """
     Annotates the frame with bounding boxes and text for detected license plates.
 
@@ -348,10 +388,10 @@ if __name__ == "__main__":
     conn, c = initialize_db()
     feed_queue = Queue(maxsize=10)
     processed_queue = Queue(maxsize=10)
-    feed_process = Process(target=feed_worker, args=(feed_queue, processed_queue))
     feed_process = Process(target=feed_worker, args=(feed_queue,))
     process_process = Process(target=process_worker, args=(feed_queue, processed_queue))
     process_process.start()
+    feed_process.start()
 
     while True:
         if not processed_queue.empty():
