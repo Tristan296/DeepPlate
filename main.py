@@ -7,55 +7,7 @@ from paddleocr import PaddleOCR
 from multiprocessing import Process, Queue
 import logging
 import sqlite3
-
-
-# SQL database setup
-def initialize_db():
-    """
-    Initialize the SQLite database and create the regos table if it doesn't exist.
-    Returns:
-        conn (sqlite3.Connection): The SQLite connection object.
-        c (sqlite3.Cursor): The SQLite cursor object.
-    """
-    conn = sqlite3.connect("regos.db")
-    c = conn.cursor()
-    c.execute(
-        """
-        CREATE TABLE IF NOT EXISTS regos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            rego TEXT NOT NULL,
-            state TEXT NOT NULL, -- Ensure the state column is created
-            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """
-    )
-    conn.commit()
-    conn.close()
-    return conn, c
-
-
-def insert_rego(rego, state):
-    """
-    Insert a new rego into the database if it doesn't already exist.
-    params:
-        rego (str): The license plate number.
-        state (str): The state code.
-
-    """
-    conn = sqlite3.connect("regos.db")  # Open a new connection
-    c = conn.cursor()
-    c.execute("SELECT COUNT(*) FROM regos WHERE rego = ? AND state = ?", (rego, state))
-    count = c.fetchone()[0]
-
-    if count > 0:
-        print(f"Rego {rego} ({state}) already exists in the database.")
-        conn.close()  # Close connection if no insertion
-        return
-
-    c.execute("INSERT INTO regos (rego, state) VALUES (?, ?)", (rego, state))
-    conn.commit()
-    conn.close()  # Ensure connection is closed after insertion
-    print(f"Rego {rego} ({state}) inserted into the database.")
+from typing import Tuple, Optional
 
 
 license_plate_patterns = {
@@ -119,11 +71,59 @@ ocr = PaddleOCR(
     use_angle_cls=True,
     lang="en")
 
-def initialize_video_capture():
-    if os.name == "nt":  # Check if the OS is Windows
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # Use DirectShow for Windows
+# SQL database setup
+def initialize_db() -> Tuple[sqlite3.Connection, sqlite3.Cursor]:
+    """
+    Initialize the SQLite database and create the regos table if it doesn't exist.
+    Returns:
+        conn (sqlite3.Connection): The SQLite connection object.
+        c (sqlite3.Cursor): The SQLite cursor object.
+    """
+    conn = sqlite3.connect("regos.db")
+    c = conn.cursor()
+    c.execute(
+        """
+        CREATE TABLE IF NOT EXISTS regos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            rego TEXT NOT NULL,
+            state TEXT NOT NULL,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """
+    )
+    conn.commit()
+    conn.close()
+    return conn, c
+
+
+def insert_rego(rego: str, state: str) -> None:
+    """
+    Insert a new rego into the database if it doesn't already exist.
+    params:
+        rego (str): The license plate number.
+        state (str): The state code.
+    """
+    conn = sqlite3.connect("regos.db")
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) FROM regos WHERE rego = ? AND state = ?", (rego, state))
+    count = c.fetchone()[0]
+
+    if count > 0:
+        print(f"Rego {rego} ({state}) already exists in the database.")
+        conn.close()
+        return
+
+    c.execute("INSERT INTO regos (rego, state) VALUES (?, ?)", (rego, state))
+    conn.commit()
+    conn.close()
+    print(f"Rego {rego} ({state}) inserted into the database.")
+
+
+def initialize_video_capture() -> cv2.VideoCapture:
+    if os.name == "nt":
+        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     else:
-        cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION)  # Use AVFoundation for macOS
+        cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION)
 
     if not cap.isOpened():
         print("Error: Could not open video feed.")
@@ -131,7 +131,7 @@ def initialize_video_capture():
     return cap
 
 
-def detect_state_and_plate(plate_text):
+def detect_state_and_plate(plate_text: str) -> Tuple[Optional[str], Optional[str]]:
     """
     Detects the state and license plate from the given text.
     Args:
@@ -145,7 +145,7 @@ def detect_state_and_plate(plate_text):
     return None, None
 
 
-def feed_worker(feed_queue):
+def feed_worker(feed_queue: Queue) -> None:
     """
     Captures video frames and pushes them to the feed queue.
     Args:
@@ -154,28 +154,27 @@ def feed_worker(feed_queue):
     cap = initialize_video_capture()
     while True:
         ret, frame = cap.read()
-        # change the frame size to 640x480
         frame = cv2.resize(frame, (800, 500))
         if not ret:
             print("Error: Could not read frame.")
             break
 
         if feed_queue.full():
-            feed_queue.get()  # Discard a frame if the queue is full (non-blocking)
+            feed_queue.get()
 
-        feed_queue.put(frame)  # Push the frame to the queue
+        feed_queue.put(frame)
 
     cap.release()
 
-def preprocess_frame(roi):
+
+def preprocess_frame(roi: np.ndarray) -> np.ndarray:
     """
     Preprocesses the frame for license plate detection.
     Args:
-        frame (numpy.ndarray): The video frame to preprocess.
+        roi (numpy.ndarray): The video frame to preprocess.
     Returns:
         numpy.ndarray: The preprocessed frame.
     """
-    #Modify the preprocess_roi function to handle small ROIs
     upsampled = cv2.resize(roi, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
     gray = cv2.cvtColor(upsampled, cv2.COLOR_BGR2GRAY)
     gray = cv2.equalizeHist(gray)
@@ -184,16 +183,16 @@ def preprocess_frame(roi):
     deskewed = deskew_image(binary)
     return deskewed
 
-def deskew_image(img):
+
+def deskew_image(img: np.ndarray) -> np.ndarray:
     coords = np.column_stack(np.nonzero(img > 0))
     rect = cv2.minAreaRect(coords)
     angle = rect[-1]
 
-    # Correct the rotation to ensure horizontal alignment
     if angle < -45:
-        angle += 90  # Fix for incorrectly rotated images
+        angle += 90
     elif angle > 45:
-        angle -= 90  # Another fix for vertical flipping
+        angle -= 90
 
     (h, w) = img.shape[:2]
     center = (w // 2, h // 2)
@@ -202,11 +201,11 @@ def deskew_image(img):
 
     return rotated
 
-def validate_combined_text(combined_text):
+
+def validate_combined_text(combined_text: str) -> Optional[str]:
     """
     Validates the combined text to check if it matches any license plate pattern.
     """
-    # remove unwanted characters
     combined_text = re.sub(replace_pattern, "", combined_text.strip())
     for state, pattern in license_plate_patterns.items():
         if re.match(pattern, combined_text):
@@ -214,7 +213,7 @@ def validate_combined_text(combined_text):
     return None
 
 
-def extract_text_from_roi(roi):
+def extract_text_from_roi(roi: np.ndarray) -> Tuple[Optional[str], Optional[str]]:
     """
     Extracts text from a region of interest (ROI) using PaddleOCR.
     Args:
@@ -249,7 +248,7 @@ def extract_text_from_roi(roi):
     return None, None
 
 
-def process_line(line):
+def process_line(line: list) -> Optional[str]:
     """
     Processes a line of detected text and extracts valid license plate information.
     Args:
@@ -268,7 +267,7 @@ def process_line(line):
     return validate_combined_text(combined_text)
 
 
-def extract_text_and_confidence(word_info):
+def extract_text_and_confidence(word_info: list) -> Tuple[str, float]:
     if isinstance(word_info[1], tuple) and len(word_info[1]) == 2:
         text = word_info[1][0]
         confidence = word_info[1][1]
@@ -279,39 +278,34 @@ def extract_text_and_confidence(word_info):
     return text, confidence
 
 
-def is_valid_plate(text):
+def is_valid_plate(text: str) -> bool:
     if len(text) < 3 or len(text) > 10:
         return False
 
-    # Check if the text contains only alphanumeric characters
     if not re.match(r"^[A-Za-z0-9]+$", text):
         return False
 
-    # Check if the text contains at least one letter and one digit
     if not re.search(r"[A-Za-z]", text) or not re.search(r"\d", text):
         return False
 
     return True
 
 
-def format_plate(text):
+def format_plate(text: str) -> str:
     """
     Formats the detected text to a standard format for license plates.
     Args:
-        Text (str): The detected text to format.
+        text (str): The detected text to format.
     Returns:
         str: The formatted text.
     """
-    # Remove spaces and hyphens
     text = re.sub(r"[-\s]+", "", text)
-    # Convert to uppercase
     text = text.upper()
-    # Replace any unwanted characters
     text = re.sub(r"[^A-Z0-9]", "", text)
     return text
 
 
-def process_worker(feed_queue, processed_queue):
+def process_worker(feed_queue: Queue, processed_queue: Queue) -> None:
     """
     Processes frames from the feed queue and performs license plate detection and recognition.
     Args:
@@ -319,16 +313,16 @@ def process_worker(feed_queue, processed_queue):
         processed_queue (Queue): The queue to store processed frames.
     """
     while True:
-        conn, _ = initialize_db()  # Open a new connection per process
+        conn, _ = initialize_db()
         if not feed_queue.empty():
             frame = feed_queue.get()
             results = model(frame, conf=0.1, device="mps", verbose=False)[0]
             frame = validate_and_annotate(frame, results)
             processed_queue.put(frame)
-        conn.close()  # Ensure the connection is closed after processing each frame
+        conn.close()
 
 
-def validate_and_annotate(frame, results):
+def validate_and_annotate(frame: np.ndarray, results: list) -> np.ndarray:
     """
     Validates detected regions of interest (ROIs) and annotates the frame with detected license plates and states.
 
@@ -345,7 +339,6 @@ def validate_and_annotate(frame, results):
     for result in results:
         for box in result.boxes:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
-            # predict the roi based on the bounding box
             roi = frame[y1:y2, x1:x2]
             rois.append(roi)
             cv2.waitKey(1)
@@ -354,12 +347,11 @@ def validate_and_annotate(frame, results):
             if detected_text and state:
                 detected_texts.append((detected_text, state, (x1, y1, x2, y2)))
                 insert_rego(detected_text, state)
-    
 
     return annotate_frame(frame, detected_texts)
 
 
-def annotate_frame(frame, detected_texts): 
+def annotate_frame(frame: np.ndarray, detected_texts: list) -> np.ndarray:
     """
     Annotates the frame with bounding boxes and text for detected license plates.
 
