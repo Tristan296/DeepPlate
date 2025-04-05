@@ -1,4 +1,7 @@
-# Image Detection
+# DeepPlate - Smart ML Rego Detection
+
+![example workflow](https://github.com/Tristan296/DeepPlate/actions/workflows/codeql.yml/badge.svg)
+
 
 > A project that utilizes machine learning to detect and classify objects in images.
 
