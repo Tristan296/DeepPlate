@@ -1,7 +1,6 @@
 # Image Detection
 
 > A project that utilizes machine learning to detect and classify objects in images.
-> Live demo [_here_](https://www.example.com). 
 
 ## Table of Contents
 
@@ -31,17 +30,38 @@
 
 ## Features
 
-List the ready features here:
+### License Plate Detection & OCR
+- Detects license plates using YOLO object detection.
+- Extracts text from plates using PaddleOCR.
 
-- Object detection in real-time
-- Classification of detected objects
-- Support for multiple image formats
+### State & License Plate Validation
+- Validates license plate text against regex patterns for Australian states and territories.
+- Supports standard, premium, historic, and special-purpose license plate formats.
 
+### Database Integration
+- Stores detected license plates and their associated states in a SQLite database (`regos.db`).
+- Prevents duplicate license plates from being inserted.
+
+### Real-Time Video Processing
+- Captures and processes video frames in real-time using OpenCV.
+- Annotates frames with bounding boxes and recognized text.
+
+### Multiprocessing
+- Utilizes Python’s `multiprocessing` module for parallel video capture and frame processing.
+- Uses a Queue for inter-process communication.
+
+### Image Preprocessing for OCR
+- Improves OCR accuracy through resizing, grayscale conversion, histogram equalization, Gaussian blur, and binarization.
+- Corrects rotated license plates using deskewing techniques.
+
+### Frame Annotation
+- Draws bounding boxes and overlays recognized license plate text on video frames.
+
+  
 ## Screenshots
 
-![Example screenshot](./img/screenshot.png)
+<img width="598" alt="Screenshot 2025-04-05 at 6 30 53 PM" src="https://github.com/user-attachments/assets/06c183b3-6ee8-4a6c-bb18-0b5a18a36620" />
 
-<!-- Add actual screenshots of the project -->
 
 ## Setup
 
@@ -54,13 +74,9 @@ List the ready features here:
 
 ## Usage
 
-- To detect objects in an image, run the following command:
+- To detect objects using webcam, run the following command:
   ```
-  python detect.py --image path/to/image.jpg
-  ```
-- For real-time detection using a webcam:
-  ```
-  python detect.py --webcam
+  python main.py
   ```
 
 ## Project Status
