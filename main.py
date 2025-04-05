@@ -113,50 +113,50 @@ class VideoProcessor:
                 frame = feed_queue.get()
                 batch_frames = [frame]  # Add more frames to the batch if available
                 self.lpr.model.fp16 = True  # Enable FP16
-                # Preprocess the frame before passing it to the model
-                preprocessed_frames = self.preprocess_frames(batch_frames)
-                # Pass the preprocessed frames to the model
-                results = self.lpr.model(preprocessed_frames, conf=0.1, device="mps", verbose=False)
+                results = self.lpr.model(batch_frames, conf=0.1, device="mps", verbose=False)
                 results = results[0]  # Process the first frame's results
                 frame = self.validate_and_annotate(frame, results)
                 processed_queue.put(frame)
 
     def preprocess_frames(self, frames: list) -> list:
         """
-        Preprocess the frames before passing them to the yolov11 model using Cv2's built-in functions.
+        Preprocess the frames using SuperResolution before passing them to the YOLO model.
         """
         preprocessed_frames = []
-        for frame in frames:  # Ensure 'frames' is passed as an argument to the method
-            # Convert to grayscale
-            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        for frame in frames:
+            # Upscale the frame using SuperResolution 
+            frame = self.upscale_frame(frame)
             
-            # Apply bilateral filter to reduce noise while preserving edges
-            filtered_frame = cv2.bilateralFilter(gray_frame, 9, 75, 75)
+            # Convert to grayscale for further processing
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # apply Gaussian blur to reduce noise
+            gray_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
             
             # Apply adaptive histogram equalization for better contrast
             clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-            equalized_frame = clahe.apply(filtered_frame)
-            
-            # Perform edge detection using Canny with optimized thresholds
-            edged_frame = cv2.Canny(equalized_frame, 50, 150)
-            
-            # Dilate edges to make them more prominent
-            dilated_frame = cv2.dilate(edged_frame, None, iterations=1)
+            equalized_frame = clahe.apply(gray_frame)
             
             # Convert back to BGR for compatibility with the YOLO model
-            preprocessed_frame = cv2.cvtColor(dilated_frame, cv2.COLOR_GRAY2BGR)
+            preprocessed_frame = cv2.cvtColor(equalized_frame, cv2.COLOR_GRAY2BGR)
             
             # Append the preprocessed frame to the list
             preprocessed_frames.append(preprocessed_frame)
         
-        # Display the preprocessed frame for debugging purposes
-        for preprocessed_frame in preprocessed_frames:
-            cv2.imshow("Preprocessed Frame", preprocessed_frame)
-            if cv2.waitKey(1) & 0xFF == ord("q"):
-                break
-        
         return preprocessed_frames
+    
+    def upscale_frame(self, frame: np.ndarray) -> np.ndarray:
+        """
+        Upscales the frame using a SuperResolution model.
+        """
+        height, width = frame.shape[:2]
+        scale_factor = max(1, 300 // min(height, width))  # Calculate scale factor to ensure minimum size of 300
+        max_dimension = 1000  # Define a maximum dimension for upscaling
+        max_scale_factor = max_dimension // max(height, width)  # Ensure it doesn't exceed max dimension
+        scale_factor = min(scale_factor, max_scale_factor)  # Use the smaller scale factor
+        if scale_factor > 1:
+            frame = cv2.resize(frame, (width * scale_factor, height * scale_factor), interpolation=cv2.INTER_LINEAR)
 
+        return frame
     
     def validate_and_annotate(self, frame: np.ndarray, results: list) -> np.ndarray:
         detected_texts = []
@@ -172,7 +172,17 @@ class VideoProcessor:
                     continue  # Skip processing this box
 
                 roi = frame[y1:y2, x1:x2]
-                state, detected_text = self.extract_text_from_roi(roi)
+                # Preprocess the ROI before OCR
+                preprocessed_roi = self.preprocess_frames([roi])[0]
+                # preview the ROI for debugging
+               
+                fixed_size = (300, 150)  # Set a fixed size for the ROI display
+                resized_roi = cv2.resize(preprocessed_roi, fixed_size, interpolation=cv2.INTER_LINEAR)
+                cv2.imshow("ROI", resized_roi)
+                if cv2.waitKey(1) & 0xFF == ord("q"):
+                    break
+                
+                state, detected_text = self.extract_text_from_roi(preprocessed_roi)
 
                 if detected_text and state:
                     detected_texts.append((detected_text, state, (x1, y1, x2, y2)))
