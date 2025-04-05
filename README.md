@@ -20,9 +20,7 @@
 
 ## General Information
 
-- This project aims to simplify the process of detecting and classifying objects in images using advanced machine learning techniques.
-- It solves the problem of manual image classification by automating the process.
-- The purpose of this project is to provide an easy-to-use tool for developers and researchers working with image data.
+- This project aims to simplify the process of detecting and classifying text in vehicle regos using advanced machine learning techniques.
 
 ## Technologies Used
 
