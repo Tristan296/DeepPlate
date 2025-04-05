@@ -148,7 +148,6 @@ class VideoProcessor:
             
             # Append the preprocessed frame to the list
             preprocessed_frames.append(preprocessed_frame)
-
         
         # Display the preprocessed frame for debugging purposes
         for preprocessed_frame in preprocessed_frames:
