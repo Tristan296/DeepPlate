@@ -4,8 +4,6 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Tristan296_DeepPlate&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Tristan296_DeepPlate&branch=main)
 
 
-> A project that utilizes machine learning to detect and classify objects in images.
-
 ## Table of Contents
 
 * [General Info](#general-information)
