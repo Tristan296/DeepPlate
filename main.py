@@ -120,7 +120,15 @@ class VideoProcessor:
 
     def preprocess_frames(self, frames: list) -> list:
         """
-        Preprocess the frames using SuperResolution before passing them to the YOLO model.
+        Preprocesses the frames for better OCR results.
+        - Upscales the frame using SuperResolution.
+        - Converts to grayscale.
+        - Applies Gaussian blur to reduce noise.
+        - Applies adaptive histogram equalization for better contrast.
+        Args:
+            frames: List of frames to preprocess.
+        Returns:
+            List of preprocessed frames.
         """
         preprocessed_frames = []
         for frame in frames:
