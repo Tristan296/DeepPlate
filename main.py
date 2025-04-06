@@ -14,7 +14,7 @@ from shapely.geometry import box as shapely_box
 class LicensePlateRecognition:
     def __init__(self, license_patterns_file: str = "license_plate_patterns.yaml"):
         self.license_plate_patterns, self.replace_pattern = self.load_license_plate_patterns(license_patterns_file)
-        self.model = YOLO(os.getcwd() + "/train14/weights/last.pt")
+        self.model = YOLO(os.getcwd() + "/weights/last.pt")
         self.model.fuse()
         self.ocr = None
 
