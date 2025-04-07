@@ -30,7 +30,6 @@
 - OpenCV - version 4.5
 
 ## Features
-
 ### License Plate Detection & OCR
 - Detects license plates using YOLO object detection.
 - Extracts text from plates using PaddleOCR.
@@ -58,8 +57,20 @@
 ### Frame Annotation
 - Draws bounding boxes and overlays recognized license plate text on video frames.
 
-  
-## Screenshots
+### Video File Processing
+- Processes video files for license plate detection and recognition.
+- Annotates detected plates in video frames and saves the results to a new video file.
+
+### GPU Acceleration
+- Leverages GPU capabilities (CUDA, MPS, or ROCm) for faster inference and processing.
+
+### Enhanced Model Training
+- Includes training configurations and results for YOLO-based object detection models.
+- Provides visualizations such as confusion matrices, precision-recall curves, and training batch predictions.
+
+### Validation and Testing
+- Validates model performance on unseen data with detailed metrics and visual results.
+- Tests the model on real-world video streams and images for generalization.
 
 <img width="598" alt="Screenshot 2025-04-05 at 6 30 53 PM" src="https://github.com/user-attachments/assets/06c183b3-6ee8-4a6c-bb18-0b5a18a36620" />
 
