@@ -8,7 +8,6 @@ import torch
 import yaml
 from paddleocr import PaddleOCR
 from ultralytics import YOLO
-from multiprocessing import Process, Queue
 from typing import Tuple, Optional
 from shapely.geometry import box as shapely_box
 import torch
@@ -42,53 +41,46 @@ def predict(chosen_model, img, classes=[], conf=0.3):
     return results
 
 def preprocess_frames(frames: list) -> list:
-        """
-        Preprocesses the frames for better OCR results.
+    """
+    Preprocesses the frames for better OCR results:
         - Upscales the frame using SuperResolution.
         - Converts to grayscale.
         - Applies Gaussian blur to reduce noise.
         - Applies adaptive histogram equalization for better contrast.
-        Args:
-            frames: List of frames to preprocess.
-        Returns:
-            List of preprocessed frames.
-        """
-        preprocessed_frames = []
-        for frame in frames:
-            # Upscale the frame using SuperResolution 
-            frame = upscale_frame(frame)
-            
-            # Convert to grayscale for further processing
-            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            # apply Gaussian blur to reduce noise
-            gray_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
-            
-            # Apply adaptive histogram equalization for better contrast
-            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-            equalized_frame = clahe.apply(gray_frame)
-            
-            # Convert back to BGR for compatibility with the YOLO model
-            preprocessed_frame = cv2.cvtColor(equalized_frame, cv2.COLOR_GRAY2BGR)
-            
-            # Append the preprocessed frame to the list
-            preprocessed_frames.append(preprocessed_frame)
-        
-        return preprocessed_frames
+        - Converts back to BGR for compatibility with the YOLO model.
+
+    Args:
+        frames: List of frames to preprocess.
+
+    Returns:
+        List of preprocessed frames.
+    """
+    preprocessed_frames = []
+    for frame in frames:
+        frame = upscale_frame(frame)
+        gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        gray_frame = cv2.GaussianBlur(gray_frame, (5, 5), 0)
+        clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+        equalized_frame = clahe.apply(gray_frame)
+        preprocessed_frame = cv2.cvtColor(equalized_frame, cv2.COLOR_GRAY2BGR)
+        preprocessed_frames.append(preprocessed_frame)
+    
+    return preprocessed_frames
 
 
 def upscale_frame(frame):
-        """
-        Upscales the frame using a SuperResolution model.
-        """
-        height, width = frame.shape[:2]
-        scale_factor = max(1, 300 // min(height, width))  # Calculate scale factor to ensure minimum size of 300
-        max_dimension = 1000  # Define a maximum dimension for upscaling
-        max_scale_factor = max_dimension // max(height, width)  # Ensure it doesn't exceed max dimension
-        scale_factor = min(scale_factor, max_scale_factor)  # Use the smaller scale factor
-        if scale_factor > 1:
-            frame = cv2.resize(frame, (width * scale_factor, height * scale_factor), interpolation=cv2.INTER_LINEAR)
+    """
+    Upscales the frame using a SuperResolution model.
+    """
+    height, width = frame.shape[:2]
+    scale_factor = max(1, 300 // min(height, width))  # Calculate scale factor to ensure minimum size of 300
+    max_dimension = 1000  # Define a maximum dimension for upscaling
+    max_scale_factor = max_dimension // max(height, width)  # Ensure it doesn't exceed max dimension
+    scale_factor = min(scale_factor, max_scale_factor)  # Use the smaller scale factor
+    if scale_factor > 1:
+        frame = cv2.resize(frame, (width * scale_factor, height * scale_factor), interpolation=cv2.INTER_LINEAR)
 
-        return frame
+    return frame
     
 def predict_and_detect(chosen_model, img, classes=[], conf=0.3, rectangle_thickness=2, text_thickness=1):
     results = predict(chosen_model, img, classes, conf=conf)
@@ -100,17 +92,6 @@ def predict_and_detect(chosen_model, img, classes=[], conf=0.3, rectangle_thickn
             cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_PLAIN, 1, (255, 0, 0), text_thickness)
     return img, results
 
-# defining function for creating a writer (for mp4 videos)
-def create_video_writer(video_cap, output_filename):
-    # grab the width, height, and fps of the frames in the video stream.
-    frame_width = int(video_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(video_cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    fps = int(video_cap.get(cv2.CAP_PROP_FPS))
-    # initialize the FourCC and a video writer object
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    writer = cv2.VideoWriter(output_filename, fourcc, fps,
-                             (frame_width, frame_height))
-    return writer
 
 def calculate_iou(box1, box2) -> float:
         """
@@ -145,6 +126,7 @@ def validate_and_annotate(frame: np.ndarray, results: list) -> np.ndarray:
             # Preprocess the ROI before OCR
             preprocessed_roi = preprocess_frames([roi])[0]
             # Preview the ROI for debugging
+           
             fixed_size = (300, 150)  # Set a fixed size for the ROI display
             resized_roi = cv2.resize(preprocessed_roi, fixed_size, interpolation=cv2.INTER_LINEAR)
             cv2.imshow("ROI", resized_roi)
@@ -160,6 +142,7 @@ def validate_and_annotate(frame: np.ndarray, results: list) -> np.ndarray:
             processed_boxes.append(current_box)
 
     return annotate_frame(frame, detected_texts)
+
 def format_plate(text: str) -> str:
         """
         Formats the detected text to a standard format for license plates.
@@ -192,6 +175,7 @@ def extract_text_and_confidence( word_info: list) -> Tuple[str, float]:
             confidence = 0.0
         return text, confidence
     
+
 def validate_combined_text(combined_text: str) -> Optional[str]:
     """
     Validates the combined text to check if it matches any license plate pattern.
@@ -296,6 +280,7 @@ def annotate_frame(frame: np.ndarray, detected_texts: list) -> np.ndarray:
 
 model = YOLO("./weights/license_plate_detector.pt")
 model.fuse()
+
 # Check if GPU is available and set the model to use it
 if torch.backends.mps.is_available():  # Check for Metal Performance Shaders (macOS/AMD)
     model.to('mps')
@@ -312,6 +297,7 @@ else:
 
 video_path = r"./videos/2103099-hd_1280_720_60fps.mp4"
 cap = cv2.VideoCapture(video_path)
+logging.disable(logging.CRITICAL)
 
 while True:
     success, img = cap.read()
