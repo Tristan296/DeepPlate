@@ -13,8 +13,6 @@
 * [Setup](#setup)
 * [Usage](#usage)
 * [Project Status](#project-status)
-* [Model Training Summary](#model-training-summary)
-* [Room for Improvement](#room-for-improvement)
 * [Contributing](CONTRIBUTIONS.md)
 * [Acknowledgements](#acknowledgements)
 * [Contact](#contact)
