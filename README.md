@@ -77,25 +77,17 @@ https://github.com/user-attachments/assets/6fc855c1-16b3-4676-80bf-a5aee27c00c2
 
 
 ## Setup
-
-- Install the required dependencies listed in `requirements.txt`.
+- Create a virtual environment and Install the required dependencies listed in `reqs.txt`.
 - Clone the repository and navigate to the project directory.
-- Run the following command to install dependencies:
+- Run the following command to install dependencies: (might need to use pip3 on some setups)
   ```
-  pip install -r requirements.txt
+  pip install -r reqs.txt 
   ```
 
 ## Usage
-
-- To detect objects using webcam, run the following command:
-  ```
-  python src/run_live_stream.py
-  ```
-
-- To detect objects from a video, run this command instead:
-```
-  python src/run_video_file_stream.py
-```
+Run main.py file and pick either:
+[1] live stream detection,
+[2] video file streamer
  
 ## Project Status
 
