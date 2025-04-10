@@ -3,6 +3,11 @@
 ![CodeQL](https://github.com/Tristan296/DeepPlate/actions/workflows/codeql.yml/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Tristan296_DeepPlate&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Tristan296_DeepPlate&branch=main)
 
+## Demo 
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/318d7a95-cdb5-4362-82cf-3cb268b4a973" alt="Video Thumbnail" width="700">
+</p>
 
 ## Table of Contents
 
