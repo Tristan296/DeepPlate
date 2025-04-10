@@ -13,7 +13,7 @@
 - [Technologies Used](#technologies-used)
 - [Contributing](.github/CONTRIBUTIONS.md)
 - [Acknowledgements](#acknowledgements)
-- [License](.github/LICENSE.md)
+- [License](.github/LICENSE)
 - [Contact](#contact)
 
 ---
