@@ -1,0 +1,10 @@
+numpy<2.0
+paddleocr==2.10.0
+PyYAML==6.0.2
+PyYAML==6.0.2
+Shapely==2.0.1
+torch==2.6.0
+ultralytics==8.3.104
+paddlepaddle==3.0.0
+opencv-python==4.11.0.86 
+opencv-contrib-python==4.11.0.86

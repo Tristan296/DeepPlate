@@ -12,7 +12,7 @@ from typing import Tuple, Optional
 from shapely.geometry import box as shapely_box
 
 class LicensePlateRecognition:
-    def __init__(self, license_patterns_file: str = "/configs/license_plate_patterns.yaml"):
+    def __init__(self, license_patterns_file: str = os.getcwd() + "/configs/license_plate_patterns.yaml"):
         self.license_plate_patterns, self.replace_pattern = self.load_license_plate_patterns(license_patterns_file)
         self.model = YOLO("/weights/license_plate_detector.pt")
         self.model.fuse()
@@ -308,12 +308,12 @@ class VideoProcessor:
         text = re.sub(r"[^A-Z0-9]", "", text)
         return text
 
-
-if __name__ == "__main__":
+def run_live_stream():
     lpr = LicensePlateRecognition()
-    vp = VideoProcessor(lpr)
+    lpr.initialize_db()
     feed_queue = Queue(maxsize=10)
     processed_queue = Queue(maxsize=10)
+    vp = VideoProcessor(lpr)
     feed_process = Process(target=vp.feed_worker, args=(feed_queue,))
     process_process = Process(target=vp.process_worker, args=(feed_queue, processed_queue))
     process_process.start()
