@@ -1,99 +1,72 @@
-# DeepPlate - Smart ML Rego Detection
+# ML Rego Detection
+*A fast, accurate, and real-time vehicle registration plate detection system.*
 
-![CodeQL](https://github.com/Tristan296/DeepPlate/actions/workflows/codeql.yml/badge.svg)
+![CodeQL](https://github.com/Tristan296/DeepPlate/actions/workflows/codeql.yml/badge.svg)  
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Tristan296_DeepPlate&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Tristan296_DeepPlate&branch=main)
 
+---
 
 ## Table of Contents
+- [Overview](#overview)
+- [Installation & Setup](#installation--setup)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
+- [Contributing](.github/CONTRIBUTIONS.md)
+- [Acknowledgements](#acknowledgements)
+- [License](.github/LICENSE)
+- [Contact](#contact)
 
-* [General Info](#general-information)
-* [Technologies Used](#technologies-used)
-* [Features](#features)
-* [Screenshots](#screenshots)
-* [Setup](#setup)
-* [Usage](#usage)
-* [Project Status](#project-status)
-* [Contributing](CONTRIBUTIONS.md)
-* [Acknowledgements](#acknowledgements)
-* [Contact](#contact)
+---
 
-## General Information
+## Overview
 
-- This project aims to simplify the process of detecting and classifying text in vehicle regos using advanced machine learning techniques.
+DeepPlate streamlines the process of detecting and classifying vehicle registration plates using advanced machine learning techniques. By leveraging YOLO for object detection and PaddleOCR for text extraction, DeepPlate validates plate formats in real-time, ensuring accuracy across various Australian states and license plate types.
+
+**Why DeepPlate?**  
+- **Speed & Accuracy:** Real-time video processing with GPU acceleration.
+- **Advanced Preprocessing:** Optimized image enhancements for reliable OCR.
+- **Multiprocessing:** Scalable deployment using Python’s multiprocessing and Queue.
+- **Comprehensive Features:** From live-stream detection to video file processing, integrated storage to prevent duplicates.
+
+---
+
+## Installation & Setup
+
+1. **Create a Virtual Environment**  
+   Set up a virtual environment to isolate project dependencies from your global Python installation.
+
+2. **Clone the Repository**  
+   Clone the repository and navigate to the project directory:
+   ```bash
+   git clone https://github.com/yourusername/DeepPlate.git
+   cd DeepPlate
+   ```
+3. **Install Dependencies**
+    Install all required packages listed in reqs.txt (use pip3 if necessary):
+    ```bash
+    pip install -r reqs.txt
+    ```
+## Usage
+### Run the main.py file and choose one of the following options:
+
+[1] Live Stream Detection – Launches detection via your webcam.
+
+[2] Video File Streaming – Analyzes and processes a saved video file.
+    
 
 ## Technologies Used
+- Python (v3.9)
+- TensorFlow (v2.10)
+- OpenCV (v4.5)
+- YOLO for Object Detection
+- PaddleOCR
 
-- Python - version 3.9
-- TensorFlow - version 2.10
-- OpenCV - version 4.5
 
-## Features
-### License Plate Detection & OCR
-- Detects license plates using YOLO object detection.
-- Extracts text from plates using PaddleOCR.
-
-### State & License Plate Validation
-- Validates license plate text against regex patterns for Australian states and territories.
-- Supports standard, premium, historic, and special-purpose license plate formats.
-
-### Database Integration
-- Stores detected license plates and their associated states in a SQLite database (`regos.db`).
-- Prevents duplicate license plates from being inserted.
-
-### Real-Time Video Processing
-- Captures and processes video frames in real-time using OpenCV.
-- Annotates frames with bounding boxes and recognized text.
-
-### Multiprocessing
-- Utilizes Python’s `multiprocessing` module for parallel video capture and frame processing.
-- Uses a Queue for inter-process communication.
-
-### Image Preprocessing for OCR
-- Improves OCR accuracy through resizing, grayscale conversion, histogram equalization, Gaussian blur, and binarization.
-- Corrects rotated license plates using deskewing techniques.
-
-### Frame Annotation
-- Draws bounding boxes and overlays recognized license plate text on video frames.
-
-### Video File Processing
-- Processes video files for license plate detection and recognition.
-- Annotates detected plates in video frames and saves the results to a new video file.
-
-### GPU Acceleration
-- Leverages GPU capabilities (CUDA, MPS, or ROCm) for faster inference and processing.
-
-### Enhanced Model Training
-- Includes training configurations and results for YOLO-based object detection models.
-- Provides visualizations such as confusion matrices, precision-recall curves, and training batch predictions.
-
-### Validation and Testing
-- Validates model performance on unseen data with detailed metrics and visual results.
-- Tests the model on real-world video streams and images for generalization.
+## Screenshots
 
 <img width="598" alt="Screenshot 2025-04-05 at 6 30 53 PM" src="https://github.com/user-attachments/assets/06c183b3-6ee8-4a6c-bb18-0b5a18a36620" />
 
 
-## Setup
-
-- Install the required dependencies listed in `requirements.txt`.
-- Clone the repository and navigate to the project directory.
-- Run the following command to install dependencies:
-  ```
-  pip install -r requirements.txt
-  ```
-
-## Usage
-
-- To detect objects using webcam, run the following command:
-  ```
-  python src/run_live_stream.py
-  ```
-
-- To detect objects from a video, run this command instead:
-```
-  python src/run_video_file_stream.py
-```
- 
 ## Project Status
 
 Project is: _in progress_. Further improvements and optimizations are being worked on.
