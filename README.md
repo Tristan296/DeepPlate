@@ -5,16 +5,14 @@
 
 ## Demo 
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/318d7a95-cdb5-4362-82cf-3cb268b4a973" alt="Video Thumbnail" width="700">
-</p>
+https://github.com/user-attachments/assets/6fc855c1-16b3-4676-80bf-a5aee27c00c2
+
 
 ## Table of Contents
 
 * [General Info](#general-information)
 * [Technologies Used](#technologies-used)
 * [Features](#features)
-* [Screenshots](#screenshots)
 * [Setup](#setup)
 * [Usage](#usage)
 * [Project Status](#project-status)
