@@ -11,7 +11,7 @@
 - [Installation & Setup](#installation--setup)
 - [Usage](#usage)
 - [Technologies Used](#technologies-used)
-- [Contributing](.github/CONTRIBUTING.md)
+- [Contributing](.github/CONTRIBUTIONS.md)
 - [Acknowledgements](#acknowledgements)
 - [License](.github/LICENSE.md)
 - [Contact](#contact)
