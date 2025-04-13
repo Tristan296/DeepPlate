@@ -1,6 +1,9 @@
 # ML Rego Detection
 
-*A fast, accurate, and real-time vehicle registration plate detection system.*
+<p>
+  <em>A fast, accurate, and real-time vehicle registration plate detection system.</em>
+  <img src="https://github.com/user-attachments/assets/c96ae9f0-1b9f-448d-b0aa-fbcf8512795e" alt="rego icon" width="140" align="right" />
+</p>
 
 ![CodeQL](https://github.com/Tristan296/DeepPlate/actions/workflows/codeql.yml/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Tristan296_DeepPlate&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Tristan296_DeepPlate&branch=main)
@@ -12,7 +15,6 @@
 - [Overview](#overview)
 - [Installation &amp; Setup](#installation--setup)
 - [Usage](#usage)
-- [Technologies Used](#technologies-used)
 - [Contributing](.github/CONTRIBUTIONS.md)
 - [Acknowledgements](#acknowledgements)
 - [License](.github/LICENSE)
@@ -23,6 +25,8 @@
 ## Overview
 
 DeepPlate streamlines the process of detecting and classifying vehicle registration plates using advanced machine learning techniques. By leveraging YOLO for object detection and PaddleOCR for text extraction, DeepPlate validates plate formats in real-time, ensuring accuracy across various Australian states and license plate types.
+
+
 
 **Why DeepPlate?**
 
@@ -40,6 +44,8 @@ DeepPlate streamlines the process of detecting and classifying vehicle registrat
    ```bash
    python setup.py
    ```
+   Note:
+   This setup may take a few minutes to install all the appropriate dependencies.
 
 ## Usage
 
