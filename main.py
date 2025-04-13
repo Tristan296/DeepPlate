@@ -1,6 +1,7 @@
 from src.run_video_file_stream import run_video_stream
 from src.run_live_stream import run_live_stream
 
+
 def main():
     options = {
         '1': ("Running live stream detection...", run_live_stream),
