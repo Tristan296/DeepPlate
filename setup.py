@@ -28,13 +28,12 @@ def setup_xquartz():
             print(f"Error installing X11: {e}")
 
     elif platform.system() == "Windows":
-        print("XQuartz setup is not required on Windows.")
-        # For Windows, you might want to install an X server like VcXsrv
+        print("Setting up VcXsrv...")
         try:
             subprocess.run(["choco", "install", "vcxsrv"], check=True)
             print("VcXsrv installed successfully.")
         except Exception as e:
-            print(f"Error installing VcXsrv: {e}")
+            print("To start the Docker image with VcXsrv on Windows, run the following command:")
 
     else:
         print("XQuartz setup is only required on macOS.")

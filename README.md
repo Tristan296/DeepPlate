@@ -1,14 +1,16 @@
 # ML Rego Detection
+
 *A fast, accurate, and real-time vehicle registration plate detection system.*
 
-![CodeQL](https://github.com/Tristan296/DeepPlate/actions/workflows/codeql.yml/badge.svg)  
+![CodeQL](https://github.com/Tristan296/DeepPlate/actions/workflows/codeql.yml/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Tristan296_DeepPlate&metric=alert_status)](https://sonarcloud.io/summary/overall?id=Tristan296_DeepPlate&branch=main)
 
 ---
 
 ## Table of Contents
+
 - [Overview](#overview)
-- [Installation & Setup](#installation--setup)
+- [Installation &amp; Setup](#installation--setup)
 - [Usage](#usage)
 - [Technologies Used](#technologies-used)
 - [Contributing](.github/CONTRIBUTIONS.md)
@@ -22,7 +24,8 @@
 
 DeepPlate streamlines the process of detecting and classifying vehicle registration plates using advanced machine learning techniques. By leveraging YOLO for object detection and PaddleOCR for text extraction, DeepPlate validates plate formats in real-time, ensuring accuracy across various Australian states and license plate types.
 
-**Why DeepPlate?**  
+**Why DeepPlate?**
+
 - **Speed & Accuracy:** Real-time video processing with GPU acceleration.
 - **Advanced Preprocessing:** Optimized image enhancements for reliable OCR.
 - **Multiprocessing:** Scalable deployment using Python’s multiprocessing and Queue.
@@ -32,40 +35,35 @@ DeepPlate streamlines the process of detecting and classifying vehicle registrat
 
 ## Installation & Setup
 
-1. **Create a Virtual Environment**  
-   Set up a virtual environment to isolate project dependencies from your global Python installation.
-
-2. **Clone the Repository**  
-   Clone the repository and navigate to the project directory:
+1. Ensure docker is installed on your computer
+2. Run setup.py:
    ```bash
-   git clone https://github.com/yourusername/DeepPlate.git
-   cd DeepPlate
+   python setup.py
    ```
-3. **Install Dependencies**
-    Install all required packages listed in reqs.txt (use pip3 if necessary):
-    ```bash
-    pip install -r reqs.txt
-    ```
+
 ## Usage
-### Run the main.py file and choose one of the following options:
 
-[1] Live Stream Detection – Launches detection via your webcam.
+**MacOS**:
 
-[2] Video File Streaming – Analyzes and processes a saved video file.
-    
+```bash
+docker run --rm -it --env DISPLAY=host.docker.internal:0 --device /dev/video0 --volume /tmp/.X11-unix:/tmp/.X11-unix --privileged deepplate-img
+```
 
-## Technologies Used
-- Python (v3.9)
-- TensorFlow (v2.10)
-- OpenCV (v4.5)
-- YOLO for Object Detection
-- PaddleOCR
+**Windows:**
 
+```bash
+docker run -e DISPLAY=host.docker.internal:0 -v . -it deepplate-img
+```
+
+**Linux**:
+
+```bash
+docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix deepplate-img
+```
 
 ## Screenshots
 
 <img width="598" alt="Screenshot 2025-04-05 at 6 30 53 PM" src="https://github.com/user-attachments/assets/06c183b3-6ee8-4a6c-bb18-0b5a18a36620" />
-
 
 ## Project Status
 
